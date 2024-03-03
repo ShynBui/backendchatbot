@@ -94,3 +94,18 @@ def delete_session(session_id):
         return jsonify({"message": "Session deleted successfully"}), 200
     else:
         return jsonify({"error": "Failed to connect to database"}), 500
+    
+# Lấy thông tin tất cả session của một user dựa trên user_id
+@session_blueprint.route('/sessions/user/<int:user_id>', methods=['GET'])
+def get_sessions_by_user_id(user_id):
+    connection = connect_to_database()
+    if connection:
+        cursor = connection.cursor(dictionary=True)
+        sql = "SELECT * FROM session WHERE user_id = %s ORDER BY end_time DESC"
+        cursor.execute(sql, (user_id,))
+        sessions = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return jsonify(sessions), 200
+    else:
+        return jsonify({"error": "Failed to connect to database"}), 500

@@ -36,7 +36,7 @@ def login():
 @jwt_required()  # Bắt buộc token phải được gửi cùng với yêu cầu
 def get_token_info():
     current_user = get_jwt_identity()  # Lấy thông tin từ token
-    return jsonify(logged_in_as=current_user), 200
+    return jsonify(current_user), 200
 
 # Thêm một người dùng mới
 @user_blueprint.route('/users', methods=['POST'])
