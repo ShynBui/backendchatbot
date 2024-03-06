@@ -27,7 +27,7 @@ def login():
             access_token = create_access_token(identity=user['user_id'])
             return jsonify(access_token=access_token), 200
         else:
-            return jsonify({"error": "Invalid username or password"}), 401
+            return jsonify({"error": "Tên đăng nhập hoặc mật khẩu không đúng"}), 401
     else:
         return jsonify({"error": "Failed to connect to database"}), 500
     
@@ -53,6 +53,17 @@ def add_user():
         role_id = 1  # Thực hiện phần quyền sau
 
         cursor = connection.cursor()
+        
+        # Kiểm tra xem username đã tồn tại chưa
+        cursor.execute("SELECT user_id FROM user WHERE username = %s", (username,))
+        existing_user = cursor.fetchone()
+        
+        if existing_user:
+            cursor.close()
+            connection.close()
+            return jsonify({"error": "Username already exists"}), 400
+        
+        # Nếu username chưa tồn tại, tiến hành thêm người dùng mới
         sql = "INSERT INTO user (username, password, full_name, email, status, img, role_id) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         values = (username, password, full_name, email, status, img, role_id)
         cursor.execute(sql, values)
@@ -68,6 +79,7 @@ def add_user():
         return jsonify({"message": "User added successfully", "user": user}), 201
     else:
         return jsonify({"error": "Failed to connect to database"}), 500
+
 
 # Lấy thông tin tất cả người dùng
 @user_blueprint.route('/users', methods=['GET'])

@@ -18,10 +18,11 @@ def add_session():
         sql = "INSERT INTO session (name, start_time, end_time, user_id) VALUES (%s, %s, %s, %s)"
         values = (name, start_time, end_time, user_id)
         cursor.execute(sql, values)
+        session_id = cursor.lastrowid  # Lấy ID của session vừa được thêm
         connection.commit()
         cursor.close()
         connection.close()
-        return jsonify({"message": "Session added successfully"}), 201
+        return jsonify({"message": "Session added successfully", "session_id": session_id}), 201
     else:
         return jsonify({"error": "Failed to connect to database"}), 500
 

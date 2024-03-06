@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
 from data.connect import connect_to_database
+from gradio_client import Client
+
 
 message_blueprint = Blueprint('messages', __name__)
 
@@ -16,10 +18,11 @@ def add_message():
         question_time = data['question_time']
         answer_time = data['answer_time']
         comment = data.get('comment', '')
+        star = data.get('star', '')
 
         cursor = connection.cursor()
-        sql = "INSERT INTO message (session_id, question, answer, question_time, answer_time, comment) VALUES (%s, %s, %s, %s, %s, %s)"
-        values = (session_id, question, answer, question_time, answer_time, comment)
+        sql = "INSERT INTO message (session_id, question, answer, question_time, answer_time, comment,star) VALUES (%s, %s, %s, %s, %s, %s,%s)"
+        values = (session_id, question, answer, question_time, answer_time, comment,star)
         cursor.execute(sql, values)
         connection.commit()
         cursor.close()
@@ -47,7 +50,7 @@ def get_session(messages_id):
     connection = connect_to_database()
     if connection:
         cursor = connection.cursor(dictionary=True)
-        sql = "SELECT * FROM messages WHERE messages_id = %s"
+        sql = "SELECT * FROM message WHERE messages_id = %s"
         cursor.execute(sql, (messages_id,))
         messages = cursor.fetchone()
         cursor.close()
@@ -71,10 +74,12 @@ def update_message(qa_id):
         question_time = data['question_time']
         answer_time = data['answer_time']
         comment = data.get('comment', '')
+        star = data.get('star', '')
+
 
         cursor = connection.cursor()
-        sql = "UPDATE message SET session_id=%s, question=%s, answer=%s, question_time=%s, answer_time=%s, comment=%s WHERE qa_id=%s"
-        values = (session_id, question, answer, question_time, answer_time, comment, qa_id)
+        sql = "UPDATE message SET session_id=%s, question=%s, answer=%s, question_time=%s, answer_time=%s, comment=%s, star = %s WHERE qa_id=%s"
+        values = (session_id, question, answer, question_time, answer_time, comment,star, qa_id)
         cursor.execute(sql, values)
         connection.commit()
         cursor.close()
@@ -99,3 +104,33 @@ def delete_message(qa_id):
     else:
         return jsonify({"error": "Failed to connect to database"}), 500
 
+# Lấy thông tin tất cả session của một user dựa trên session_id
+@message_blueprint.route('/messages/session/<int:session_id>', methods=['GET'])
+def get_sessions_by_user_id(session_id):
+    connection = connect_to_database()
+    if connection:
+        cursor = connection.cursor(dictionary=True)
+        sql = "SELECT * FROM message WHERE session_id = %s ORDER BY qa_id"
+        cursor.execute(sql, (session_id,))
+        sessions = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return jsonify(sessions), 200
+    else:
+        return jsonify({"error": "Failed to connect to database"}), 500
+    
+# Lấy thông tin tất cả session của một user dựa trên session_id
+@message_blueprint.route('/messages/apiModel', methods=['POST'])
+def apiModel():
+    data = request.json
+    client = Client("ShynBui/Vector_db")
+    result = client.predict(
+		data,	# str  in 'quote' Textbox component
+		api_name="/predict"
+    )
+
+    if result:
+       
+        return jsonify(result), 200
+    else:
+        return jsonify({"error": "Failed to connect to database"}), 500
