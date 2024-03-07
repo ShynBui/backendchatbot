@@ -3,10 +3,7 @@ Kích hoạt môi trường ảo bằng cách sử dụng lệnh sau:
 Trên Windows:
 Copy code
 myenv\Scripts\activate
-Trên macOS/Linux:
-bash
-Copy code
-source myenv/bin/activate
+
 
 #create in env 
 pip install Flask
