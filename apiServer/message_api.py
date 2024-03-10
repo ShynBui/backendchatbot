@@ -21,13 +21,19 @@ def add_message():
         star = data.get('star', '')
 
         cursor = connection.cursor()
-        sql = "INSERT INTO message (session_id, question, answer, question_time, answer_time, comment,star) VALUES (%s, %s, %s, %s, %s, %s,%s)"
-        values = (session_id, question, answer, question_time, answer_time, comment,star)
+        sql = "INSERT INTO message (session_id, question, answer, question_time, answer_time, comment, star) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        values = (session_id, question, answer, question_time, answer_time, comment, star)
         cursor.execute(sql, values)
         connection.commit()
+
+        # Lấy qa_id của phần tử vừa thêm
+        qa_id = cursor.lastrowid
+
         cursor.close()
         connection.close()
-        return jsonify({"message": "Message added successfully"}), 201
+
+        # Trả về câu trả lời JSON bao gồm qa_id
+        return jsonify({"message": "Message added successfully", "qa_id": qa_id}), 201
     else:
         return jsonify({"error": "Failed to connect to database"}), 500
 

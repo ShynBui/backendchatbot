@@ -4,3 +4,5 @@ Flask-JWT-Extended==4.3.1
 Flask-Cors
 Werkzeug==2.0.3
 mysql-connector-python
+gradio-client
+openai

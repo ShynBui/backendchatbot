@@ -8,7 +8,7 @@ myenv\Scripts\activate
 #create in env 
 pip install Flask
 pip install pymysql
-
+pip install gradio_client
 
 Cài đặt thư viện Flask-JWT-Extended để xử lý token JWT.
 pip install flask-jwt-extended.

@@ -1,7 +1,10 @@
 from data.connect import connect_to_database
 # Đọc nội dung của file SQL dump
 
-mycursor = connect_to_database.cursor()
+# Kết nối đến cơ sở dữ liệu
+connection = connect_to_database()
+
+mycursor = connection.cursor()
 
 with open('dump.sql', 'r') as file:
     sql_script = file.read()
@@ -12,7 +15,7 @@ commands = sql_script.split(';')
 for command in commands:
     try:
         mycursor.execute(command)
-        connect_to_database.commit()
+        connection.commit()
     except Exception as e:
         print("Error:", e)
 
