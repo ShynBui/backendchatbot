@@ -105,7 +105,7 @@ def get_objects_by_year():
     connection = connect_to_database()  # Kết nối tới cơ sở dữ liệu
     if connection:
         cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM data_score ORDER BY year")
+        cursor.execute("SELECT * FROM data_score ORDER BY year DESC")
         objects = cursor.fetchall()
         cursor.close()
         connection.close()
@@ -125,7 +125,7 @@ def get_objects_by_year():
             })
 
         # Chuyển đổi từ điển thành danh sách các mảng đối tượng theo năm
-        result = [objects_by_year[year] for year in sorted(objects_by_year.keys())]
+        result = [objects_by_year[year] for year in objects_by_year.keys()]
 
         return jsonify(result), 200
         # return jsonify({"error": objects}), 200
