@@ -83,7 +83,6 @@ def add_user():
 
 # Lấy thông tin tất cả người dùng
 @user_blueprint.route('/users', methods=['GET'])
-@jwt_required()
 def get_all_users():
     connection = connect_to_database()
     if connection:
@@ -140,7 +139,7 @@ def get_user_info():
 
 # Cập nhật thông tin của một người dùng
 @user_blueprint.route('/users/<int:user_id>', methods=['PUT'])
-@jwt_required()
+# @jwt_required()
 def update_user(user_id):
     connection = connect_to_database()
     if connection:
@@ -166,7 +165,7 @@ def update_user(user_id):
 
 # Xóa một người dùng
 @user_blueprint.route('/users/<int:user_id>', methods=['DELETE'])
-@jwt_required()
+# @jwt_required()
 def delete_user(user_id):
     connection = connect_to_database()
     if connection:
