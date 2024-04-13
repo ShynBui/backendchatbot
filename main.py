@@ -8,6 +8,10 @@ from apiServer.information_api import information_blueprint
 from apiServer.chat_emloyee_api import chat_blueprint
 from apiServer.data_score_api import data_score_blueprint
 from apiServer.faculty_api import faculty_blueprint
+from apiServer.admission_subject_api import admission_subject_blueprint
+from apiServer.data_score_vs_subject_combination_api import data_score_vs_subject_combination_blueprint
+from apiServer.subject_combination_api import subject_combination_blueprint
+from apiServer.subject_combination_vs_admission_subject_api import subject_combination_vs_admission_subject_blueprint
 
 from flask_cors import CORS
 # from apiServer.gpt_api import callGpt
@@ -53,6 +57,10 @@ app.register_blueprint(information_blueprint)
 app.register_blueprint(chat_blueprint)
 app.register_blueprint(data_score_blueprint)
 app.register_blueprint(faculty_blueprint)
+app.register_blueprint(admission_subject_blueprint)
+app.register_blueprint(data_score_vs_subject_combination_blueprint)
+app.register_blueprint(subject_combination_blueprint)
+app.register_blueprint(subject_combination_vs_admission_subject_blueprint)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -14,12 +14,13 @@ def add_data_score():
         name = data['name']
         id_faculty = data.get('id_faculty', None)
         year = data['year']
+        multiplier = data.get('multiplier', None)  # Thêm đọc giá trị của cột multiplier nếu có
 
         cursor = connection.cursor()
-        sql = "INSERT INTO data_score (id_career, score, name, id_faculty, year) VALUES (%s, %s, %s, %s, %s)"
-        values = (id_career, score, name, id_faculty, year)
+        sql = "INSERT INTO data_score (id_career, score, name, id_faculty, year, multiplier) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (id_career, score, name, id_faculty, year, multiplier)  # Thêm giá trị của cột multiplier vào câu lệnh SQL
         cursor.execute(sql, values)
-        id_score = cursor.lastrowid  # Lấy ID của bản ghi vừa được thêm
+        id_score = cursor.lastrowid
         connection.commit()
         cursor.close()
         connection.close()
@@ -70,10 +71,11 @@ def update_data_score(id_score):
         name = data.get('name', None)
         id_faculty = data.get('id_faculty', None)
         year = data.get('year', None)
+        multiplier = data.get('multiplier', None)  # Thêm giá trị của cột multiplier nếu có
 
         cursor = connection.cursor()
-        sql = "UPDATE data_score SET id_career=%s, score=%s, name=%s, id_faculty=%s, year=%s WHERE id_score=%s"
-        values = (id_career, score, name, id_faculty, year, id_score)
+        sql = "UPDATE data_score SET id_career=%s, score=%s, name=%s, id_faculty=%s, year=%s, multiplier=%s WHERE id_score=%s"
+        values = (id_career, score, name, id_faculty, year, multiplier, id_score)  # Thêm giá trị của cột multiplier vào câu lệnh SQL
         cursor.execute(sql, values)
         connection.commit()
         cursor.close()
@@ -102,14 +104,14 @@ def delete_data_score(id_score):
 # Endpoint để lấy danh sách các đối tượng theo năm
 @data_score_blueprint.route('/objects_by_year', methods=['GET'])
 def get_objects_by_year():
-    connection = connect_to_database()  # Kết nối tới cơ sở dữ liệu
+    connection = connect_to_database()
     if connection:
         cursor = connection.cursor(dictionary=True)
         cursor.execute("SELECT * FROM data_score ORDER BY year DESC")
         objects = cursor.fetchall()
         cursor.close()
         connection.close()
-  # Tạo một từ điển để lưu trữ danh sách các đối tượng theo năm
+
         objects_by_year = {}
         for obj in objects:
             year = obj['year']
@@ -121,14 +123,12 @@ def get_objects_by_year():
                 'score': obj['score'],
                 'name': obj['name'],
                 'id_faculty': obj['id_faculty'],
-                'year': year  # Sử dụng giá trị year mà không cần chuyển đổi kiểu dữ liệu
+                'year': year
             })
 
-        # Chuyển đổi từ điển thành danh sách các mảng đối tượng theo năm
         result = [objects_by_year[year] for year in objects_by_year.keys()]
 
         return jsonify(result), 200
-        # return jsonify({"error": objects}), 200
     else:
         return jsonify({"error": "Failed to connect to database"}), 500
 
@@ -141,14 +141,14 @@ def calculate_average_score(objects_by_year):
         if num_objects > 0:
             average_score = total_score / num_objects
         else:
-            average_score = 0  # Tránh chia cho 0 khi không có đối tượng
+            average_score = 0
         average_scores[year] = average_score
     return average_scores
 
 # Endpoint để lấy danh sách các đối tượng theo năm và tính điểm trung bình
 @data_score_blueprint.route('/objects_and_average_score_by_year', methods=['GET'])
 def get_objects_and_average_score_by_year():
-    connection = connect_to_database()  # Kết nối tới cơ sở dữ liệu
+    connection = connect_to_database()
     if connection:
         cursor = connection.cursor(dictionary=True)
         cursor.execute("SELECT * FROM data_score ORDER BY year")
@@ -156,7 +156,6 @@ def get_objects_and_average_score_by_year():
         cursor.close()
         connection.close()
 
-        # Tạo một từ điển để lưu trữ danh sách các đối tượng theo năm
         objects_by_year = {}
         for obj in objects:
             year = obj['year']
@@ -168,13 +167,11 @@ def get_objects_and_average_score_by_year():
                 'score': obj['score'],
                 'name': obj['name'],
                 'id_faculty': obj['id_faculty'],
-                'year': year  # Sử dụng giá trị year mà không cần chuyển đổi kiểu dữ liệu
+                'year': year
             })
 
-        # Tính điểm trung bình mỗi năm
         average_scores = calculate_average_score(objects_by_year)
 
-        # Tạo danh sách kết quả với điểm trung bình mỗi năm
         result = []
         for year, objects in sorted(objects_by_year.items()):
             year_data = {'year': year, 'objects': objects}

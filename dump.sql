@@ -48,11 +48,37 @@ CREATE TABLE `data_score`(
     `score` DOUBLE NOT NULL,
     `name` VARCHAR(255) NOT NULL,
     `id_faculty` INT NULL,
-    `year` INT NOT NULL
+    `year` INT NOT NULL,
+    `multiplier` VARCHAR(255) NULL
 );
 CREATE TABLE `faculty`(
     `id_faculty` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE `admission_subject`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id_subject` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) NULL
+);
+
+CREATE TABLE `data_score_vs_subject_combination`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id_score` INT NOT NULL,
+    `id_combination` VARCHAR(255) NULL,
+    `formula` VARCHAR(255) NULL
+);
+
+CREATE TABLE `subject_combination_vs_admission_subject`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id_combination` VARCHAR(255) NOT NULL,
+    `id_subject` VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE `subject_combination`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id_combination` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) NULL
 );
 ALTER TABLE
     `chat_with_emloyee` ADD CONSTRAINT `chat_with_emloyee_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`user_id`);
@@ -64,3 +90,12 @@ ALTER TABLE
     `session` ADD CONSTRAINT `session_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`user_id`);
 ALTER TABLE
     `message` ADD CONSTRAINT `message_session_id_foreign` FOREIGN KEY(`session_id`) REFERENCES `session`(`session_id`);
+
+ALTER TABLE
+    `subject_combination` ADD CONSTRAINT `subject_combination_id_combination_foreign` FOREIGN KEY(`id_combination`) REFERENCES `data_score_vs_subject_combination`(`id_combination`);
+
+ALTER TABLE
+    `subject_combination` ADD CONSTRAINT `subject_combination_id_combination_foreign` FOREIGN KEY(`id_combination`) REFERENCES `subject_combination_vs_admission_subject`(`id_combination`);
+
+ALTER TABLE
+    `subject_combination_vs_admission_subject` ADD CONSTRAINT `subject_combination_vs_admission_subject_id_subject_foreign` FOREIGN KEY(`id_subject`) REFERENCES `admission_subject`(`id_subject`);
