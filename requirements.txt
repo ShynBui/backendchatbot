@@ -6,3 +6,4 @@ Werkzeug==2.0.3
 mysql-connector-python
 gradio-client
 openai
+hashlib

@@ -15,8 +15,11 @@ CREATE TABLE `message`(
     `answer` TEXT NOT NULL,
     `question_time` DATETIME NOT NULL,
     `answer_time` DATETIME NOT NULL,
-    `comment` TEXT NULL
+    `comment` TEXT NULL,
+    `star` INT NULL,
+    `message_summary` VARCHAR(255) NULL
 );
+
 CREATE TABLE `session`(
     `session_id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` TEXT NULL,
@@ -80,6 +83,33 @@ CREATE TABLE `subject_combination`(
     `id_combination` VARCHAR(255) NOT NULL,
     `name` VARCHAR(255) NULL
 );
+
+CREATE TABLE `new_page`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `content` TEXT NOT NULL,
+    `create_time` DATETIME NOT NULL,
+    `update_time` DATETIME NULL
+);
+
+CREATE TABLE `bug_comment`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `bug_question_id` INT NOT NULL,
+    `content` TEXT NOT NULL,
+    `user_id` INT NOT NULL,
+    `user_id_last_comment` INT NOT NULL
+);
+
+CREATE TABLE `bug_question`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(255) NOT NULL,
+    `content` TEXT NOT NULL,
+    `view` INT NOT NULL,
+    `create_time` DATETIME NOT NULL,
+    `user_id` INT NOT NULL
+);
+
 ALTER TABLE
     `chat_with_emloyee` ADD CONSTRAINT `chat_with_emloyee_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`user_id`);
 ALTER TABLE
@@ -99,3 +129,14 @@ ALTER TABLE
 
 ALTER TABLE
     `subject_combination_vs_admission_subject` ADD CONSTRAINT `subject_combination_vs_admission_subject_id_subject_foreign` FOREIGN KEY(`id_subject`) REFERENCES `admission_subject`(`id_subject`);
+
+ALTER TABLE
+    `bug_comment` ADD CONSTRAINT `bug_comment_bug_question_id_foreign` FOREIGN KEY(`bug_question_id`) REFERENCES `bug_question`(`id`);
+
+ALTER TABLE
+    `bug_comment` ADD CONSTRAINT `bug_comment_user_id_last_comment_foreign` FOREIGN KEY(`user_id_last_comment`) REFERENCES `user`(`user_id`);
+ALTER TABLE
+    `bug_comment` ADD CONSTRAINT `bug_comment_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`user_id`);
+
+ALTER TABLE
+    `bug_question` ADD CONSTRAINT `bug_question_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`user_id`);

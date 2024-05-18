@@ -7,6 +7,8 @@ message_blueprint = Blueprint('messages', __name__)
 
 
 # Thêm một tin nhắn mới
+
+# Thêm một tin nhắn mới
 @message_blueprint.route('/messages', methods=['POST'])
 def add_message():
     connection = connect_to_database()
@@ -19,10 +21,12 @@ def add_message():
         answer_time = data['answer_time']
         comment = data.get('comment', '')
         star = data.get('star', '')
+        message_summary=data.get('message_summary','')
 
         cursor = connection.cursor()
-        sql = "INSERT INTO message (session_id, question, answer, question_time, answer_time, comment, star) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        values = (session_id, question, answer, question_time, answer_time, comment, star)
+        sql = "INSERT INTO message (session_id, question, answer, question_time, answer_time, comment, star, message_summary) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        # Loại bỏ hoặc cung cấp giá trị mặc định cho message_summary trong dữ liệu JSON
+        values = (session_id, question, answer, question_time, answer_time, comment, star, message_summary)
         cursor.execute(sql, values)
         connection.commit()
 
@@ -131,7 +135,8 @@ def apiModel():
     data = request.json
     client = Client("ShynBui/Vector_db")
     result = client.predict(
-		data,	# str  in 'quote' Textbox component
+		data.quote,	# str  in 'quote' Textbox component
+		data.history,	# str  in 'history' Textbox component
 		api_name="/predict"
     )
 

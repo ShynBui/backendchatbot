@@ -106,7 +106,7 @@ def get_data_score_and_combination_by_year():
 
         # Truy vấn để lấy dữ liệu từ bảng data_score và mảng id_combination từ bảng data_score_vs_subject_combination
         sql = """
-            SELECT ds.id_score, ds.id_career, ds.score, ds.name, ds.id_faculty, ds.year,
+           SELECT ds.id_score, ds.id_career, ds.score, ds.name, ds.id_faculty, ds.year, ds.multiplier,
                     JSON_ARRAYAGG(dsvc.id_combination) AS id_combination
             FROM data_score ds
             LEFT JOIN data_score_vs_subject_combination dsvc ON ds.id_score = dsvc.id_score
